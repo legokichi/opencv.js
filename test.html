@@ -1,0 +1,48 @@
+<script src="./cv.js"></script>
+<img id="img" src="opencv/samples/data/basketball1.png" />
+<canvas id="cnv"></canvas>
+<script>
+Module.addOnPostRun(()=>{
+  console.log("OnPostRun");
+  const img = document.getElementById('img');
+  const cnv = document.getElementById('cnv');
+  const ctx = cnv.getContext('2d');
+
+  cnv.width = img.width;
+  cnv.height = img.height;
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+  const imgData = ctx.getImageData(0,0,cnv.width,cnv.height);
+  console.log(imgData);
+
+  console.time("detectFace");
+  const face_cascade = new Module.CascadeClassifier();
+  const loaded = face_cascade.load('./data/haarcascades/haarcascade_frontalface_default.xml');
+  if(!loaded){
+    throw new Error("cannot load cascade file");
+  }
+  const mat = Module.matFromArray(imgData, 24); // 24 for rgba
+  const mat_gray = new Module.Mat();
+  Module.cvtColor(mat, mat_gray, Module.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+  const faces = new Module.RectVector();
+  console.log(mat_gray, faces);
+
+  face_cascade.detectMultiScale(mat_gray, faces, 1.1, 3, 0, [0, 0], [0, 0]);
+
+  for (let i=0; i<faces.size(); i+=1){
+    const faceRect = faces.get(i);
+    x = faceRect.x ;
+    y = faceRect.y ;
+    w = faceRect.width ;
+    h = faceRect.height;
+    ctx.rect(x, y, x+w, y+h);
+    ctx.strokeStyle = "red";
+    ctx.stroke();
+    faceRect.delete();
+  }
+  faces.delete();
+  mat.delete();
+  mat_gray.delete();
+  console.timeEnd("detectFace");
+});
+console.log("ready");
+</script>
