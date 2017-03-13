@@ -1,0 +1,33 @@
+<img id="img" src="opencv/samples/data/basketball1.png" />
+<canvas id="cnv"></canvas>
+<script>
+const img = document.getElementById('img');
+const cnv = document.getElementById('cnv');
+const ctx = cnv.getContext('2d');
+const worker = new Worker("./worker.js");
+worker.onmessage = ({data})=>{
+  console.log("worker", data);
+  cnv.width = img.width;
+  cnv.height = img.height;
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+
+  const imgData = ctx.getImageData(0,0,cnv.width,cnv.height);
+  
+  
+  console.time("detect");
+  console.assert(imgData.data.buffer.byteLength > 0);
+  worker.postMessage(imgData, [imgData.data.buffer]);
+  console.assert(imgData.data.buffer.byteLength === 0);
+
+  worker.onmessage = ({data})=>{
+    console.timeEnd("detect");
+    console.log("rects", data);
+    
+    const rects = data;
+    ctx.strokeStyle = "red";
+    rects.forEach(({x,y,w,h})=>{
+      ctx.strokeRect(x, y, x+w, y+h);
+    });
+  };
+};
+</script>

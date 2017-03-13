@@ -70,7 +70,9 @@ Module.addOnPostRun(()=>{
   cnv.width = img.width;
   cnv.height = img.height;
   ctx.drawImage(img, 0, 0, img.width, img.height);
+
   const imgData = ctx.getImageData(0,0,cnv.width,cnv.height);
+
   xml.forEach((path, i)=>{
     const rects = detect(path, imgData);
     const color = colors[i%colors.length];
