@@ -138,7 +138,7 @@ emcc \
   --preload-file ./data/haarcascades/haarcascade_upperbody.xml \
   --bind \
   -O2 \
-  --llvm-lto 1 \
+  --llvm-lto 3 \
   -s ASSERTIONS=0 \
   -s ALLOW_MEMORY_GROWTH=1 \
   -o ../../cv.js
@@ -148,3 +148,5 @@ emcc \
 # -s ASSERTIONS=0 \
 # -s AGGRESSIVE_VARIABLE_ELIMINATION=0 \
 # -s NO_DYNAMIC_EXECUTION=0 \
+# -s ALLOW_MEMORY_GROWTH=1 \
+# -s TOTAL_MEMORY=33554432 \
