@@ -122,8 +122,7 @@ emcc \
   ./lib/libopencv_objdetect.a \
   ./3rdparty/lib/libzlib.a \
   --bind \
-  -O2 \
-  --llvm-lto 1 \
+  -O2 --llvm-lto 1 \
   -o ./binded.bc
 # compile to js
 echo converting to js
@@ -137,8 +136,7 @@ emcc \
   --preload-file ./data/haarcascades/haarcascade_fullbody.xml \
   --preload-file ./data/haarcascades/haarcascade_upperbody.xml \
   --bind \
-  -O2 \
-  --llvm-lto 3 \
+  -O2 --llvm-lto 3 \
   -s ASSERTIONS=0 \
   -s ALLOW_MEMORY_GROWTH=1 \
   -o ../../cv.js
