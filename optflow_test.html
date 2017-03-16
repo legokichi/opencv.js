@@ -1,0 +1,69 @@
+<script src="./cv.js"></script>
+<!--img id="img" src="opencv/samples/data/basketball1.png" /-->
+<!--img id="img" src="opencv/samples/data/right06.jpg" /-->
+<img id="img" src="opencv/samples/data/messi5.jpg" />
+<canvas id="cnv"></canvas>
+<script>
+
+const pyr_scale = 0.5;
+const levels = 1;
+const winsize = 40;
+const iterations = 1;
+const poly_n = 5;
+const poly_sigma = 1.1;
+const flags = 4;
+
+function detect(imgData){
+  
+
+  const mat = Module.matFromArray(imgData, 24); // 24 for rgba
+  
+  const mat_gray = new Module.Mat();
+  Module.cvtColor(mat, mat_gray, Module.ColorConversionCodes.COLOR_RGBA2GRAY.value, 0);
+
+  mat.delete();
+
+  const prev = mat_gray;
+  const next = mat_gray;
+
+  const flow = new Module.Mat();
+  window["flow"] = flow;
+
+  console.time("detect");
+  Module.calcOpticalFlowFarneback( prev, next, flow,
+    pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags);
+  console.timeEnd("detect");
+
+  mat_gray.delete();
+  flow.delete();
+
+  const rects = [];  
+
+  
+  return rects;
+}
+
+Module.addOnPostRun(()=>{
+  console.log("OnPostRun");
+
+  const img = document.getElementById('img');
+  const cnv = document.getElementById('cnv');
+  const ctx = cnv.getContext('2d');
+
+  cnv.width = img.width;
+  cnv.height = img.height;
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+
+  const imgData = ctx.getImageData(0,0,cnv.width,cnv.height);
+
+  const rects = detect(imgData);
+  console.log(rects);
+  ctx.strokeStyle = "red";
+  rects.forEach(({x,y,w,h})=>{
+    ctx.strokeRect(x, y, x+w, y+h);
+  });
+
+});
+
+console.log("ready");
+</script>
