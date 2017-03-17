@@ -2,9 +2,9 @@
 cd opencv
 mkdir build
 cd build
-OPTS='-O2 --llvm-lto 1 -s SIMD=1'
 # configure
 echo emcmake cmake
+OPTS='-O2 --llvm-lto 1 -s SIMD=1'
 emcmake cmake \
   -DCMAKE_BUILD_TYPE=RELEASE \
   -DBUILD_DOCS=OFF \
@@ -78,7 +78,7 @@ emcmake cmake \
   -DWITH_IPP=OFF \
   -DENABLE_SSE=OFF \
   -DENABLE_SSE2=OFF \
-  -DENABLE_SSE3=OFF \
+  -DENABLE_SSE3=ON \
   -DENABLE_SSE41=OFF \
   -DENABLE_SSE42=OFF \
   -DENABLE_AVX=OFF \
@@ -109,7 +109,7 @@ emcc \
   -I../modules/video/include \
   ../../optflow_bindings.cpp \
   --bind \
-  -O2 -s SIMD=1 \
+  -O2 -s SIMD=1\
   -o ./optflow_bindings.bc
 # link
 # The Object File order is important - https://github.com/kripken/emscripten/issues/2619
@@ -129,7 +129,7 @@ echo converting to js
 emcc \
   optflow_binded.bc \
   --bind \
-  -O2 --llvm-lto 3 -s SIMD=1 \
+  -O2 --llvm-lto 3 -s SIMD=1\
   -s TOTAL_MEMORY=33554432 \
   -s ASSERTIONS=0 \
   -o ../../cv.js
